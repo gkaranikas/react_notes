@@ -1,6 +1,6 @@
 {
-  "name": "Scrim-s04mqf3",
-  "description": "https://v2.scrimba.com/learn-react-c0e/~04k",
+  "name": "react_notes",
+  "description": "A simple notes app using React",
   "scripts": {
     "start": "vite",
     "dev": "vite",
