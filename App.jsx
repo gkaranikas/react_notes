@@ -17,6 +17,8 @@ export default function App() {
 
   const [currentNoteId, setCurrentNoteId] = React.useState("");
 
+  const [tempNoteText, setTempNoteText] = React.useState("");
+
   const currentNote =
     notes.find((note) => note.id === currentNoteId) || notes[0];
 
@@ -39,6 +41,18 @@ export default function App() {
     }
   }, [notes]);
 
+  React.useEffect(() => {
+    setTempNoteText(currentNote?.body || "");
+  }, [currentNote]);
+
+  // TODO: if user edits note and then switches notes in the sidebar within 500ms, the edit is lost.  Maybe fix this.
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (tempNoteText !== currentNote.body) updateNote(tempNoteText);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [tempNoteText]);
+
   async function createNewNote() {
     const now = Date.now();
     const newNote = {
@@ -58,6 +72,10 @@ export default function App() {
     );
   }
 
+  function updateTempNoteText(text) {
+    setTempNoteText(text);
+  }
+
   async function deleteNote(event, noteId) {
     await deleteDoc(doc(notesCollection, noteId));
   }
@@ -74,7 +92,10 @@ export default function App() {
             deleteNote={deleteNote}
           />
           {currentNoteId && notes.length > 0 && (
-            <Editor currentNote={currentNote} updateNote={updateNote} />
+            <Editor
+              tempNoteText={tempNoteText}
+              updateTempNoteText={updateTempNoteText}
+            />
           )}
         </Split>
       ) : (
